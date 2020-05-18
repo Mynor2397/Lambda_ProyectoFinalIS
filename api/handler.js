@@ -3,6 +3,7 @@
 const _ = require('lodash')
 const aws = require('aws-sdk')
 const pipe = require('./helper/pipes')
+const dynamoContrato = require('./database/dynamo')
 
 const textract = new aws.Textract();
 var s3 = new aws.S3()
@@ -57,9 +58,9 @@ const findValueBlock = (keyBlock, valueMap) => {
 };
 
 const getKeyValueRelationship = (keyMap, valueMap, blockMap) => {
-    console.info('Esto es keyMap: ', keyMap)
-    console.info('Esto es valueMap: ', valueMap)
-    console.info('Esto es blockMap: ', blockMap)
+    // console.info('Esto es keyMap: ', keyMap)
+    // console.info('Esto es valueMap: ', valueMap)
+    // console.info('Esto es blockMap: ', blockMap)
 
     const keyValues = {};
 
@@ -73,7 +74,7 @@ const getKeyValueRelationship = (keyMap, valueMap, blockMap) => {
         keyValues[key] = value;
     });
 
-    console.info('Esto es keyvalues: ', keyValues);
+    // console.info('Esto es keyvalues: ', keyValues);
 
     return keyValues;
 };
@@ -97,7 +98,7 @@ const getKeyValueMap = blocks => {
         }
     });
 
-    console.info('Function getKeyValueMap', keyMap, valueMap, blockMap)
+    // console.info('Function getKeyValueMap', keyMap, valueMap, blockMap)
     return { keyMap, valueMap, blockMap };
 };
 
@@ -128,14 +129,15 @@ module.exports.uploadfile = (event, context, callback) => {
 
 
 module.exports.contratos = async(event, context, callback) => {
-    console.info("Data del event: ", event);
+    // console.info("Data del event: ", event);
     const data = JSON.parse(event.body);
-    console.info("Data en el event.body: ", data)
+    // console.info("Data en el event.body: ", data)
 
     var paramsObject = { Bucket: 'filesproyectismacm', Key: data.name }
     let dataBuffer = s3.getObject(paramsObject, function(err, data) {
         return data;
     });
+
     const buffer = await dataBuffer.promise()
     console.info(buffer.Body);
 
@@ -154,13 +156,27 @@ module.exports.contratos = async(event, context, callback) => {
         const { keyMap, valueMap, blockMap } = getKeyValueMap(textractResponse.Blocks);
 
         const keyValues = getKeyValueRelationship(keyMap, valueMap, blockMap);
-        const dataClear = await pipe(keyValues)
+        let dataClear = await pipe(keyValues)
 
-        const response = {
-            statusCode: 200,
-            body: JSON.stringify(dataClear)
-        };
 
-        return response;
+        try {
+            const insertedObject = await dynamoContrato(dataClear);
+            console.info('Esta es la respuesta del dynamoinsert-', insertedObject);
+
+            return {
+                statusCode: 200,
+                body: JSON.stringify(insertedObject.contrato)
+            }
+
+        } catch (error) {
+
+            return {
+                statusCode: 500,
+                body: JSON.stringify({
+                    message: error.message
+                })
+            }
+        }
+
     }
 }

@@ -7,10 +7,17 @@ provider:
   stage: dev
   region: us-east-1
   profile: default
+  environment:
+    CONTRATOS_TABLE: ${self:service}-${opt:stage, self:provider.stage}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
         - "s3:*"
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:DeleteItem
       Resource: "*"
 
 functions:
@@ -52,3 +59,22 @@ resources:
               - "*"
               AllowedHeaders:
               - "*"
+    ContratosDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: "id"
+            AttributeType: "S"
+        KeySchema:
+          -
+            AttributeName: "id"
+            KeyType: "HASH"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        StreamSpecification:
+          StreamViewType: "NEW_AND_OLD_IMAGES"
+        TableName: ${self:provider.environment.CONTRATOS_TABLE}
+        

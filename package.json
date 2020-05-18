@@ -11,7 +11,9 @@
   "license": "ISC",
   "dependencies": {
     "aws-sdk": "^2.678.0",
+    "bluebird": "^3.7.2",
     "fs": "0.0.1-security",
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.15",
+    "uuid": "^8.0.0"
   }
 }
