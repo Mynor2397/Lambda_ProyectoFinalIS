@@ -1,0 +1,54 @@
+# service: lambda-textract-proyecto
+service: lambda-textract
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+  region: us-east-1
+  profile: default
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:*"
+      Resource: "*"
+
+functions:
+  textract:
+    handler: api/handler.contratos
+    memorySize: 500
+    description: Send a file
+    events:
+     - http:
+        path: textract
+        method: post
+        cors: true
+  uploadfile:
+    handler: api/handler.uploadfile
+    memorySize: 500
+    description: Extrae el texto de la imagen
+    events:
+     - http:
+        path: uploadfile
+        method: post
+        cors: true
+
+
+resources:
+  Resources:
+    FilesBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: filesproyectismacm
+        AccessControl: PublicRead
+        CorsConfiguration:
+          CorsRules:
+            - AllowedMethods:
+              - GET
+              - PUT
+              - POST
+              - HEAD
+              AllowedOrigins:
+              - "*"
+              AllowedHeaders:
+              - "*"
