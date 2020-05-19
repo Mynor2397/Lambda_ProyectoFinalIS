@@ -24,7 +24,7 @@ functions:
   textract:
     handler: api/handler.contratos
     memorySize: 500
-    description: Send a file
+    description: Extrae el texto de la imagen
     events:
      - http:
         path: textract
@@ -33,12 +33,21 @@ functions:
   uploadfile:
     handler: api/handler.uploadfile
     memorySize: 500
-    description: Extrae el texto de la imagen
+    description: Sube el archivo al bucket S3
     events:
      - http:
         path: uploadfile
         method: post
         cors: true
+  getallelements:
+    handler: api/reports.getallelements
+    description: Trae todos los registros de la base de datos
+    events:
+     - http: 
+        path: report
+        method: get
+        cors: true 
+
 
 
 resources:

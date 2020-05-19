@@ -132,6 +132,7 @@ module.exports.contratos = async(event, context, callback) => {
     // console.info("Data del event: ", event);
     const data = JSON.parse(event.body);
     // console.info("Data en el event.body: ", data)
+    const url = `https://filesproyectismacm.s3.amazonaws.com/${data.name}`
 
     var paramsObject = { Bucket: 'filesproyectismacm', Key: data.name }
     let dataBuffer = s3.getObject(paramsObject, function(err, data) {
@@ -160,7 +161,7 @@ module.exports.contratos = async(event, context, callback) => {
 
 
         try {
-            const insertedObject = await dynamoContrato(dataClear);
+            const insertedObject = await dynamoContrato(dataClear, url);
             console.info('Esta es la respuesta del dynamoinsert-', insertedObject);
 
             return {

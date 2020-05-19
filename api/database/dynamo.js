@@ -7,10 +7,10 @@ aws.config.setPromisesDependency(require('bluebird'))
 
 const dynamoDB = new aws.DynamoDB.DocumentClient();
 
-const InsertObject = Object => {
+const InsertObject = (Object, URL) => {
     console.info('Objeto function insertObject: ', Object)
     return new Promise((respond, errorobj) => {
-        submitContratoC(contratoInfo(Object))
+        submitContratoC(contratoInfo(Object, URL))
             .then(res => {
                 respond({
                     statusCode: 200,
@@ -38,9 +38,10 @@ const submitContratoC = contratoIns => {
         .then(res => contratoIns)
 }
 
-const contratoInfo = Contrato => {
+const contratoInfo = (Contrato, URL) => {
     const timestamp = new Date().getTime();
     const AddInfo = {
+        url: URL,
         id: uuid.v1(),
         submitedAt: timestamp,
         updateAt: timestamp,
