@@ -2,6 +2,7 @@
 
 const uuid = require('uuid')
 const aws = require('aws-sdk')
+const moment = require('moment')
 
 aws.config.setPromisesDependency(require('bluebird'))
 
@@ -39,12 +40,15 @@ const submitContratoC = contratoIns => {
 }
 
 const contratoInfo = (Contrato, URL) => {
-    const timestamp = new Date().getTime();
+    let timeInsert = moment().format('YYYY-MM-DD')
+    let timeStamp = new Date().getTime()
     const AddInfo = {
         url: URL,
         id: uuid.v1(),
-        submitedAt: timestamp,
-        updateAt: timestamp,
+        submitedAt: timeInsert,
+        updateAt: timeInsert,
+        exactSubmitted: timeStamp,
+        exactUpdated: timeStamp,
     };
 
     const elementContrato = Object.assign(Contrato, AddInfo);
