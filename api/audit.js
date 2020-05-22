@@ -8,7 +8,8 @@ const sqs = new AWS.SQS({
 
 module.exports.auditSQS = (event, context, callback) => {
     console.info(event.body)
-    const queueUrl = `https://sqs.us-east-1.amazonaws.com/134660201575/audit`;
+    const accountId = context.invokedFunctionArn.split(":")[4];
+    const queueUrl = `https://sqs.us-east-1.amazonaws.com/${accountId}/auditIS`;
     const responseBody = {
         message: ""
     };

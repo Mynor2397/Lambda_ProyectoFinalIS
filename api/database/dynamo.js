@@ -31,7 +31,7 @@ const InsertObject = (Object, URL) => {
 
 const submitContratoC = contratoIns => {
     const contratoInfo = {
-        TableName: 'lambda-textract-dev',
+        TableName: 'proyectofinalIS-dev',
         Item: contratoIns
     }
 

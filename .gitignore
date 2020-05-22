@@ -7,3 +7,4 @@ jspm_packages
 
 .vscode
 test
+api/contracts.js

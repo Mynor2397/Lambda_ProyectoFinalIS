@@ -1,5 +1,5 @@
 # service: lambda-textract-proyecto
-service: lambda-proyecto
+service: proyectofinalIS
 
 provider:
   name: aws
@@ -63,6 +63,7 @@ functions:
         cors: true
   queueProcessor:
     handler: api/audit.SaveOnMysql
+    description: Desencola los elementos y los guarda en mysql
     timeout: 30
     events: 
       - sqs:
@@ -70,6 +71,14 @@ functions:
             Fn::GetAtt:
               - SQSAudit
               - Arn
+  getContractByDate:
+    handler: api/reports.getBetwenDate
+    description: Retorna los elementos entre dos fechas
+    events:
+      - http:
+          path: reportdate
+          method: post
+          cors: true
 
 
 
@@ -78,7 +87,7 @@ resources:
     FilesBucket:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: filesbonilla
+        BucketName: filesproyecto
         AccessControl: PublicRead
         CorsConfiguration:
           CorsRules:
@@ -112,5 +121,5 @@ resources:
     SQSAudit:
       Type: 'AWS::SQS::Queue'  
       Properties:
-        QueueName: "audit"
+        QueueName: "auditIS"
         
