@@ -1,5 +1,5 @@
 # service: lambda-textract-proyecto
-service: lambda-textract
+service: lambda-proyecto
 
 provider:
   name: aws
@@ -78,7 +78,7 @@ resources:
     FilesBucket:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: filesproyectismacm
+        BucketName: filesbonilla
         AccessControl: PublicRead
         CorsConfiguration:
           CorsRules:

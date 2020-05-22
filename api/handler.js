@@ -109,7 +109,7 @@ module.exports.uploadfile = (event, context, callback) => {
     let s3 = new aws.S3();
 
     var s3Params = {
-        Bucket: 'filesproyectismacm',
+        Bucket: 'filesbonilla',
         Key: data.name,
         ContentType: data.type,
         ACL: 'public-read',
@@ -132,9 +132,9 @@ module.exports.contratos = async(event, context, callback) => {
     // console.info("Data del event: ", event);
     const data = JSON.parse(event.body);
     // console.info("Data en el event.body: ", data)
-    const url = `https://filesproyectismacm.s3.amazonaws.com/${data.name}`
+    const url = `https://filesbonilla.s3.amazonaws.com/${data.name}`
 
-    var paramsObject = { Bucket: 'filesproyectismacm', Key: data.name }
+    var paramsObject = { Bucket: 'filesbonilla', Key: data.name }
     let dataBuffer = s3.getObject(paramsObject, function(err, data) {
         return data;
     });
