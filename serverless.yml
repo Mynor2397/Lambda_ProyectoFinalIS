@@ -12,6 +12,9 @@ provider:
   iamRoleStatements:
     - Effect: "Allow"
       Action:
+        - "sqs:SendMessage"
+        - "sqs:GetQueueUrl"
+        - "sqs:ListQueues"
         - "s3:*"
         - dynamodb:Query
         - dynamodb:Scan
@@ -19,6 +22,9 @@ provider:
         - dynamodb:PutItem
         - dynamodb:DeleteItem
       Resource: "*"
+
+  exclude:
+    - test/**
 
 functions:
   textract:
@@ -47,6 +53,23 @@ functions:
         path: report
         method: get
         cors: true 
+  sqsRDSMysql: 
+    handler: api/audit.auditSQS
+    description: Encola los datos de auditoria para mysql
+    events: 
+     - http: 
+        path: sqsaudit
+        method: post
+        cors: true
+  queueProcessor:
+    handler: api/audit.SaveOnMysql
+    timeout: 30
+    events: 
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - SQSAudit
+              - Arn
 
 
 
@@ -86,4 +109,8 @@ resources:
         StreamSpecification:
           StreamViewType: "NEW_AND_OLD_IMAGES"
         TableName: ${self:provider.environment.CONTRATOS_TABLE}
+    SQSAudit:
+      Type: 'AWS::SQS::Queue'  
+      Properties:
+        QueueName: "audit"
         
